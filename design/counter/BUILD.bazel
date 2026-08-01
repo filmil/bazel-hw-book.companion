@@ -1,0 +1,19 @@
+# Chapter 1 claims compile order is *derived*, not maintained: the deps
+# edge below is the only statement that util must be analyzed first.
+# Delete it and the build fails immediately and locally, in a sandbox
+# that honestly does not contain the package.
+load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library", "ghdl_verilog")
+
+package(default_visibility = ["//visibility:public"])
+
+ghdl_library(
+    name = "counter_pkg_lib",
+    srcs = ["counter_pkg.vhd"],
+    deps = ["//design/util"],
+)
+
+ghdl_verilog(
+    name = "counter_pkg_v",
+    lib = ":counter_pkg_lib",
+    unit = "counter_pkg",
+)

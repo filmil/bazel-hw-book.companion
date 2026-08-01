@@ -1,0 +1,15 @@
+# Chapter 1, "A tour of a real HDL ruleset". This BUILD file is the
+# listing on that page, unabridged -- two rules, and Bazel knows the
+# dependency between them.
+load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library", "ghdl_verilog")
+
+ghdl_library(
+    name = "counter_lib",
+    srcs = ["counter.vhd"],
+)
+
+ghdl_verilog(
+    name = "counter_v",
+    lib = ":counter_lib",
+    unit = "counter",
+)

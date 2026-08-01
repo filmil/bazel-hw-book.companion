@@ -1,0 +1,23 @@
+"""The companion workspace for "Hardware Development with Bazel".
+
+Every target here is a listing from the book, buildable as printed. The
+chapter directories hold BUILD files and their sources and nothing else,
+so a listing on the page and a target in this repo can be compared line
+by line.
+
+Versions are the ones the hdlfactory registry actually serves; check with
+
+    curl -s https://raw.githubusercontent.com/filmil/bazel-registry/main/\
+      modules/bazel_rules_ghdl/metadata.json | jq -r .versions[-1]
+"""
+
+module(
+    name = "hdl_bazel_book_examples",
+    version = "0.1.0",
+    bazel_compatibility = [">=8.0.0"],
+)
+
+# The VHDL toolchain Chapter 1 tours. bazel_rules_ghdl builds GHDL itself
+# from Ada source through the @ghdl module, so nothing needs installing --
+# and the first build is correspondingly slow.
+bazel_dep(name = "bazel_rules_ghdl", version = "1.0.0")

@@ -1,0 +1,9 @@
+load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library")
+
+package(default_visibility = ["//visibility:public"])
+
+ghdl_library(
+    name = "util",
+    srcs = ["pkg_types.vhd"],
+    library_name = "util",
+)

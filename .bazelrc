@@ -1,0 +1,7 @@
+# The hdlfactory registry carries the HDL rulesets; BCR carries the rest.
+# Same pair the book's own repository uses.
+common --registry=https://raw.githubusercontent.com/filmil/bazel-registry/main
+common --registry=https://bcr.bazel.build
+
+# Local overrides, not checked in.
+try-import %workspace%/user.bazelrc
