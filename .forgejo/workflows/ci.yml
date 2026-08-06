@@ -1,0 +1,40 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+      # Everything here comes from Bazel modules -- GHDL is built from
+      # source through @ghdl -- so unlike the manuscript repository this
+      # one needs nothing from the image but bazel itself.
+      - name: Build and test every listing
+        run: bazel test //... --test_output=errors
+      # Chapter 1 claims compile order is derived, not maintained. The
+      # claim is only worth printing if it is true, so assert the
+      # failure rather than trusting the prose: with the deps edge gone,
+      # the build must fail and say why.
+      - name: The derived-order claim must actually hold
+        run: |
+          cp design/counter/BUILD.bazel /tmp/keep
+          sed -i '/deps = \["\/\/design\/util"\],/d' design/counter/BUILD.bazel
+          if bazel build //design/counter:counter_pkg_lib 2>/tmp/err; then
+            cp /tmp/keep design/counter/BUILD.bazel
+            echo "FAIL: the build succeeded without the deps edge, so"
+            echo "Chapter 1's derived-compile-order claim is now false."
+            exit 1
+          fi
+          cp /tmp/keep design/counter/BUILD.bazel
+          grep -q 'cannot find resource library "util"' /tmp/err || {
+            echo "FAIL: it failed, but not with the located error the"
+            echo "book promises. Actual:"; cat /tmp/err; exit 1; }
+          echo "confirmed: GHDL cannot find the package, in a sandbox"
+          echo "that honestly does not contain it"

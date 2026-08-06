@@ -1,0 +1,17 @@
+# Chapter 3, "Macros vs Rules". Both macros stamp the same two targets;
+# the difference is where a mistake surfaces.
+load(":macros.bzl", "ghdl_verilog_from_sources", "ghdl_verilog_symbolic")
+
+# Legacy macro: a bare Starlark function.
+ghdl_verilog_from_sources(
+    name = "counter_legacy",
+    srcs = ["counter.vhd"],
+    unit = "counter",
+)
+
+# Symbolic macro: the same call site, with a declared schema behind it.
+ghdl_verilog_symbolic(
+    name = "counter_symbolic",
+    srcs = ["counter.vhd"],
+    unit = "counter",
+)

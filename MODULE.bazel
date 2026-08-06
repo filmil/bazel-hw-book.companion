@@ -21,3 +21,6 @@ module(
 # from Ada source through the @ghdl module, so nothing needs installing --
 # and the first build is correspondingly slow.
 bazel_dep(name = "bazel_rules_ghdl", version = "1.0.0")
+
+# unittest.bzl, for the analysistest examples of Chapter 19.
+bazel_dep(name = "bazel_skylib", version = "1.9.0")

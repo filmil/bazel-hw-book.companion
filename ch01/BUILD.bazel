@@ -3,6 +3,10 @@
 # dependency between them.
 load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library", "ghdl_verilog")
 
+# ch19 analyzes this same source, so the tests assert against the
+# design the tour builds rather than a copy that could drift.
+exports_files(["counter.vhd"])
+
 ghdl_library(
     name = "counter_lib",
     srcs = ["counter.vhd"],

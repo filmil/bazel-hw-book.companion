@@ -1,0 +1,21 @@
+# Chapter 19, the base of the test pyramid: analysis tests that assert on
+# providers and actions without running GHDL at all.
+load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library")
+load(":provider_test.bzl", "action_contract_test", "provider_contract_test")
+
+ghdl_library(
+    name = "counter_lib",
+    srcs = ["//ch01:counter.vhd"],
+)
+
+provider_contract_test(
+    name = "provider_contract",
+    size = "small",
+    target_under_test = ":counter_lib",
+)
+
+action_contract_test(
+    name = "action_contract",
+    size = "small",
+    target_under_test = ":counter_lib",
+)
