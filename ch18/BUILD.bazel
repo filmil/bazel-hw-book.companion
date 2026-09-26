@@ -1,0 +1,26 @@
+# Chapter 18, "Aspects". The filegroup is the chapter's listing, as
+# printed. Chapter 9 shows the same filegroup with other comments.
+#
+# The vhdl_ls_gen aspect reads the tags and writes one manifest part per
+# tagged target. From the repository root:
+#
+#   bazel build //... \
+#       --aspects=@vhdl_ls_gen//vhdl_ls_aspect:vhdl_ls.bzl%vhdl_ls_aspect \
+#       --output_groups=vhdl_ls_manifests
+#
+# writes bazel-bin/ch18/srcs.vhdl_ls_part, and
+#
+#   bazel run @vhdl_ls_gen//:gen
+#
+# collects the parts into vhdl_ls.toml at the repository root.
+filegroup(
+    name = "srcs",
+    srcs = ["my_vhdl_lib/my_package.vhd"],
+    tags = [
+        # Mark: these files belong in a library.
+        "vhdl_ls",
+        # Name that library `some_library`. That is
+        # what vhdl_ls will know it as.
+        "vhdl_ls_lib_some_library",
+    ],
+)

@@ -1,3 +1,4 @@
 /bazel-*
 /user.bazelrc
 /MODULE.bazel.lock
+/vhdl_ls.toml

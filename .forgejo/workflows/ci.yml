@@ -55,3 +55,15 @@ jobs:
             echo "FAIL: loading failed, but not with the error the book"
             echo "promises. Actual:"; cat /tmp/err3; exit 1; }
           echo "confirmed: the symbolic macro names the misspelled attribute"
+      # Chapter 18 prints an aspect command that no test can run, because
+      # an aspect is a flag on the build. Run it as printed and check the
+      # manifest part it writes for the tagged filegroup.
+      - name: The Chapter 18 aspect command writes the manifest
+        run: |
+          bazel build //... \
+              --aspects=@vhdl_ls_gen//vhdl_ls_aspect:\
+          vhdl_ls.bzl%vhdl_ls_aspect \
+              --output_groups=vhdl_ls_manifests
+          cat bazel-bin/ch18/srcs.vhdl_ls_part
+          grep -q '^some_library.files = \[' bazel-bin/ch18/srcs.vhdl_ls_part
+          grep -q '"ch18/my_vhdl_lib/my_package.vhd"' bazel-bin/ch18/srcs.vhdl_ls_part

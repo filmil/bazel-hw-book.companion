@@ -41,6 +41,10 @@ bazel_dep(name = "rules_shell", version = "0.8.0")
 # The constraint values of the Chapter 13 platform.
 bazel_dep(name = "platforms", version = "1.1.0")
 
+# The vhdl_ls aspect of Chapters 9 and 18. 0.3.1 is the version Appendix E
+# names.
+bazel_dep(name = "vhdl_ls_gen", version = "0.3.1")
+
 # unittest.bzl and bzl_library, for the tests of Chapters 10 and 19.
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
 
