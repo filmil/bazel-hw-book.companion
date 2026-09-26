@@ -237,6 +237,14 @@ Without `--zip_undeclared_test_outputs`, Bazel 9 lists each output file and writ
 
 ## Where a file differs from the printed listing
 
+Chapter 1's targets live in the `ch01` package here.
+So `//:counter_v` in the book is `//ch01:counter_v` in this repository.
+
+The rows above marked "with a fix" record listings that did not build as printed.
+Book pull request #62 (https://git.hdlfactory.com/filmil/bazel-hw-book/pulls/62) fixes them in the book.
+Once it is merged, those files match the printed listings.
+The errors it fixes were these:
+
 - Chapter 1 builds `//core:counter_v` in #2 and `//:counter_v` in #3 and #5.
   Here the target is `//ch01:counter_v`.
 - Chapter 3 #3 declares `"entities": attr.string_list()`.
@@ -246,6 +254,7 @@ Without `--zip_undeclared_test_outputs`, Bazel 9 lists each output file and writ
   In the grlib module the tool is `//third_party/grlib/scripts:gen_config_vhd`.
 - Chapter 13 #3 offers VHDL-1987 in the flag values.
   NVC 1.22 rejects it with `VHDL standard 1076-1987 is not supported`.
+  The book keeps the value, because the listing quotes grlib, and now says that NVC rejects it.
 - Chapter 19 #1 loads `@rules_ghdl//:rules.bzl`, while Chapters 1 and 22 load `@bazel_rules_ghdl//:rules.bzl`.
   Both name the same ruleset; this repository uses the second name.
 - Chapter 21 #1 needs `rules_vunit` 1.3.0 or later for its `@rules_vunit//:vhdl_*` keys.
