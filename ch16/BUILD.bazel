@@ -1,11 +1,17 @@
 # Chapter 16, "Module extensions". extensions.bzl is the chapter's
-# riscv_toolchain extension, as printed. MODULE.bazel activates it with the
-# chapter's use_extension and use_repo lines; see the comment there.
+# riscv_toolchain extension, as printed. MODULE.bazel activates it, and
+# the rules_kconfig extension, with the chapter's use_extension and
+# use_repo lines; see the comments there.
 #
-# The targets below are not in the book. They use the fetched GCC to
-# compile a freestanding C function, and check that the result is a
-# RISC-V object file.
+# The targets below are not in the book. They check what the two
+# extensions created.
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+exports_files(["Kconfig"])
+
+# The GCC from the riscv_toolchain extension compiles a freestanding C
+# function, and the test checks that the result is a RISC-V object file.
 
 genrule(
     name = "hello_o",
@@ -25,4 +31,13 @@ sh_test(
     srcs = ["riscv_elf_test.sh"],
     args = ["$(rootpath :hello_o)"],
     data = [":hello_o"],
+)
+
+# The grlib_config repository from the kconfig extension provides
+# config.h. The test checks that it holds the Kconfig defaults.
+cc_test(
+    name = "config_test",
+    size = "small",
+    srcs = ["config_test.c"],
+    deps = ["@grlib_config//:config"],
 )

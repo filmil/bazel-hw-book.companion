@@ -1,0 +1,13 @@
+# A small Kconfig for the kconfig.repo() listing of Chapter 16. GRLIB's
+# own Kconfig selects one of many designs; this one sets the design
+# prefix that Chapter 9's config.vhd genrule reads from config.h.
+
+mainmenu "Companion GRLIB-style configuration"
+
+config ACTIVE_DESIGN_PREFIX
+	string "Prefix of the active design"
+	default "leon3"
+
+config USE_FPU
+	bool "Include the floating-point unit"
+	default y

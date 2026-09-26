@@ -70,3 +70,24 @@ riscv_toolchain = use_extension(
     "//ch16:extensions.bzl",
     "riscv_toolchain")
 use_repo(riscv_toolchain, "opensbi_riscv_toolchain")
+
+# The kconfig listing of Chapter 16, for rules_kconfig 0.4.0. The listing
+# names the root Kconfig "//:Kconfig"; here it is in ch16. The Python
+# interpreter comes from rules_python, as in the grlib module that the
+# listing is taken from.
+bazel_dep(name = "rules_kconfig", version = "0.4.0")
+bazel_dep(name = "rules_python", version = "1.9.0")
+bazel_dep(name = "rules_cc", version = "0.2.19")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.12")
+use_repo(python, "python_3_12_host")
+
+kconfig = use_extension(
+    "@rules_kconfig//kconfig:extensions.bzl", "kconfig")
+kconfig.repo(
+    name = "grlib_config",
+    kconfig = "//ch16:Kconfig",
+    interpreter = "@python_3_12_host//:python",
+)
+use_repo(kconfig, "grlib_config")
