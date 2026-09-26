@@ -1,9 +1,9 @@
-"""Chapter 19's analysis tests, run against a real rule.
+"""Two more analysis tests in the style of Chapter 19.
 
-`analysistest` analyzes a target and asserts on what it produced --- its
-providers and its registered actions --- without executing anything. No
-GHDL runs here, so these are milliseconds, which is the point the chapter
-makes about the base of the test pyramid.
+`analysistest` analyzes a target and checks what it produced: its
+providers and its registered actions. It executes nothing. No GHDL runs
+here, so each test takes milliseconds. The chapter puts tests like these
+at the base of the test pyramid.
 """
 
 load("@bazel_rules_ghdl//:rules.bzl", "GhdlProvider")
@@ -33,7 +33,7 @@ def _provider_contract_impl(ctx):
     asserts.true(
         env,
         provider.cf_file != None,
-        "cf_file carries the library catalog; ghdl_verilog derives " +
+        "cf_file names the library catalog; ghdl_verilog derives " +
         "--workdir from it, and no file name recovers it",
     )
     return analysistest.end(env)
@@ -56,7 +56,7 @@ def _action_contract_impl(ctx):
     asserts.true(
         env,
         "GHDL" in mnemonics,
-        "the analysis action must carry the GHDL mnemonic: aquery " +
+        "the analysis action must have the GHDL mnemonic: aquery " +
         "filtering and failure headers both key on it. Saw: " +
         str(mnemonics),
     )

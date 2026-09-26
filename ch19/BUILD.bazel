@@ -1,13 +1,19 @@
-# Chapter 19, the base of the test pyramid: analysis tests that assert on
-# providers and actions without running GHDL at all.
-load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library")
+# Chapter 19, "Testing rules". Three things live here: the chapter's
+# analysis test listing, two more analysis tests on the same target, and
+# the stardoc golden listing.
+load("@stardoc//stardoc:stardoc.bzl", "stardoc")
+load("@bazel_lib//lib:write_source_files.bzl",
+     "write_source_files")
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load(":library_test.bzl", "ghdl_test_suite")
 load(":provider_test.bzl", "action_contract_test", "provider_contract_test")
 
-ghdl_library(
-    name = "counter_lib",
-    srcs = ["//ch01:counter.vhd"],
-)
+# The listing's ghdl_test_suite macro stamps dep_lib, counter_lib and the
+# analysis test. None of them run GHDL.
+ghdl_test_suite(name = "library_contract")
 
+# Two more contracts on the same counter_lib: the provider fields a
+# consumer reads, and the declared outputs of the GHDL action.
 provider_contract_test(
     name = "provider_contract",
     size = "small",
@@ -18,4 +24,32 @@ action_contract_test(
     name = "action_contract",
     size = "small",
     target_under_test = ":counter_lib",
+)
+
+# The stardoc listing. rules_bzl is not in the listing. It is the
+# bzl_library that `deps` names, added so that stardoc can read the files
+# rules.bzl loads.
+bzl_library(
+    name = "rules_bzl",
+    srcs = ["rules.bzl"],
+    deps = [
+        "//ch03:testbench_bzl",
+        "@rules_nvc//build/nvc:rules",
+    ],
+)
+
+stardoc(
+    name = "rules_md",
+    out = "gen.rules.md",
+    input = "rules.bzl",
+    deps = [":rules_bzl"],
+)
+
+# The listing names the source "//:rules_md", because in a ruleset this
+# BUILD file sits at the repository root. Here it sits in ch19.
+write_source_files(
+    name = "update_docs",
+    files = {
+        "rules.md": "//ch19:rules_md",
+    },
 )

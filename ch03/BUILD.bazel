@@ -2,6 +2,7 @@
 # targets; the difference is where a mistake surfaces. The NVC macros
 # below them are the chapter's vhdl_testbench and the symbolic rewrite of
 # vhdl_test.
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load(":macros.bzl", "ghdl_verilog_from_sources", "ghdl_verilog_symbolic")
 load(":testbench.bzl", "vhdl_testbench")
 load(":vhdl_test_symbolic.bzl", "vhdl_test")
@@ -37,4 +38,12 @@ vhdl_test(
     srcs = ["counter.vhd", "counter_tb.vhd"],
     deps = [],
     entities = ["counter_tb"],
+)
+
+# For the stardoc listing of Chapter 19, which documents this macro.
+bzl_library(
+    name = "testbench_bzl",
+    srcs = ["testbench.bzl"],
+    visibility = ["//ch19:__pkg__"],
+    deps = ["@rules_nvc//build/nvc:rules"],
 )

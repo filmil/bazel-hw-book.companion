@@ -38,5 +38,12 @@ bazel_dep(name = "rules_shar", version = "1.0.7")
 # sh_test, for the Chapter 11 demo test.
 bazel_dep(name = "rules_shell", version = "0.8.0")
 
-# unittest.bzl, for the analysis tests of Chapters 10 and 19.
+# unittest.bzl and bzl_library, for the tests of Chapters 10 and 19.
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
+
+# The stardoc golden of Chapter 19. These two lines are the MODULE.bazel
+# part of the Chapter 5 listing, as printed.
+bazel_dep(name = "stardoc", version = "0.8.1",
+          dev_dependency = True)
+bazel_dep(name = "bazel_lib", version = "3.3.1",
+          dev_dependency = True)
