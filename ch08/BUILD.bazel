@@ -1,0 +1,19 @@
+# Chapter 8, "Actions": a generic whose value is a build artifact. The
+# listing is a fragment. The load statement, the tb_lib library and the
+# stim.dat file are added so it builds. The vhdl_elaborate target is the
+# listing as printed.
+load("@rules_nvc//build/nvc:rules.bzl", "vhdl_elaborate", "vhdl_library")
+
+vhdl_library(
+    name = "tb_lib",
+    srcs = ["tb.vhd"],
+)
+
+vhdl_elaborate(
+    name = "tb",
+    library = ":tb_lib",
+    generics = {
+        "STIM_FILE": "$(location :stim.dat)",
+    },
+    data = [":stim.dat"],
+)
