@@ -1,0 +1,23 @@
+# Chapter 22, "Case study: RTL to bitstream". The listing is the GHDL half
+# and the Vivado half of one BUILD file. Only the GHDL half is here: the
+# first load statement and the lib and verilog targets, as printed.
+#
+# The Vivado half loads @rules_vivado//build/vivado:rules.bzl and defines
+# vivado_synthesis2 and vivado_place_and_route2 targets. Those need a
+# licensed Vivado install, which no Bazel module can fetch, so they are
+# left out. The README lists them as not covered.
+load("@bazel_rules_ghdl//:rules.bzl",
+     "ghdl_library", "ghdl_verilog")
+
+ghdl_library(
+    name = "lib",
+    srcs = ["hello.vhdl"],
+    args = ["--ieee=synopsys"],
+)
+
+ghdl_verilog(
+    name = "verilog",
+    lib = ":lib",
+    unit = "my_module",
+    args = ["--ieee=synopsys"],
+)
