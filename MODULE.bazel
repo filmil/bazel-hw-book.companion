@@ -31,6 +31,12 @@ bazel_dep(name = "rules_ghdl", version = "1.2.0", repo_name = "bazel_rules_ghdl"
 # registry. That build needs a C compiler on the host.
 bazel_dep(name = "rules_nvc", version = "4.5.2")
 
+# VUnit and OSVVM as VHDL libraries, for the Chapter 21 testbench. The
+# listing's select() keys first appear in rules_vunit 1.3.0; 1.3.4 needs
+# rules_osvvm 1.1.6.
+bazel_dep(name = "rules_vunit", version = "1.3.4")
+bazel_dep(name = "rules_osvvm", version = "1.1.6")
+
 # Self-extracting archives, for the Chapter 11 demo. 1.0.7 is the version
 # Appendix E names.
 bazel_dep(name = "rules_shar", version = "1.0.7")

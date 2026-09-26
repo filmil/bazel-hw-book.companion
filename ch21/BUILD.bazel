@@ -1,0 +1,41 @@
+# Chapter 21, "Verification flow": a VUnit testbench run as a vhdl_test.
+# The vhdl_test target is the chapter's first listing, with one label
+# changed. The listing names its sources "//:srcs", because in the
+# rules_vunit integration module the filegroup sits in the root package.
+# Here it sits in ch21, so the label is ":srcs".
+#
+# The select() keys come from rules_vunit 1.3.0 and later. Appendix E
+# names 1.2.2, which does not define @rules_vunit//:vhdl_*.
+load("@rules_nvc//build/nvc:rules.bzl", "vhdl_test")
+
+vhdl_test(
+    name = "lib",
+    srcs = [":srcs"],
+    deps = [
+        "@rules_vunit//tool.nvc:vunit_lib",
+    ] + select({
+        "@rules_vunit//:vhdl_2019": [
+            "@rules_osvvm//tool.nvc:osvvm",
+        ],
+        "//conditions:default": [],
+    }),
+    entities = ["tb", "tb_cfg_default"],
+    standard = select({
+        "@rules_vunit//:vhdl_1993": "1993",
+        "@rules_vunit//:vhdl_2002": "2002",
+        "@rules_vunit//:vhdl_2008": "2008",
+        "@rules_vunit//:vhdl_2019": "2019",
+        "//conditions:default": "2019",
+    }),
+)
+
+# Not part of the listing. The testbench from the rules_vunit integration
+# test, with its VHDL-1993 variant, chosen by the same flag.
+filegroup(
+    name = "srcs",
+    srcs = select({
+        "@rules_vunit//:vhdl_1993": ["test_93_2002.vhdl"],
+        "@rules_vunit//:vhdl_2002": ["test_93_2002.vhdl"],
+        "//conditions:default": ["test.vhdl"],
+    }),
+)
