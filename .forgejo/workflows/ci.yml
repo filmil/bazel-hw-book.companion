@@ -14,8 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Everything here comes from Bazel modules. GHDL is built from Ada
-      # source through @ghdl. Unlike the manuscript repository, this one
-      # needs only bazel from the image.
+      # source through @ghdl, and NVC from C source through @nvc. Unlike
+      # the manuscript repository, this one needs only bazel and a C
+      # compiler from the image.
       - name: Build and test every listing
         run: bazel test //... --test_output=errors
       # Chapter 1 claims that Bazel derives the compile order from the
@@ -37,3 +38,20 @@ jobs:
             echo "book promises. Actual:"; cat /tmp/err; exit 1; }
           echo "confirmed: without the deps edge, GHDL cannot find the"
           echo "util package"
+      # Chapter 3 claims that a symbolic macro rejects a misspelled
+      # attribute at the call site. Misspell srcs in the symbolic
+      # vhdl_test call and check that loading fails with that error.
+      - name: The symbolic-macro claim must actually hold
+        run: |
+          cp ch03/BUILD.bazel /tmp/keep3
+          sed -i '/name = "counter_sim"/,/^)/ s/srcs =/sources =/' ch03/BUILD.bazel
+          if bazel build //ch03:all 2>/tmp/err3; then
+            cp /tmp/keep3 ch03/BUILD.bazel
+            echo "FAIL: the misspelled attribute was accepted."
+            exit 1
+          fi
+          cp /tmp/keep3 ch03/BUILD.bazel
+          grep -q "no such attribute 'sources' in 'vhdl_test' macro" /tmp/err3 || {
+            echo "FAIL: loading failed, but not with the error the book"
+            echo "promises. Actual:"; cat /tmp/err3; exit 1; }
+          echo "confirmed: the symbolic macro names the misspelled attribute"

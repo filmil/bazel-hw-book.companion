@@ -1,6 +1,10 @@
-# Chapter 3, "Macros vs Rules". Both macros stamp the same two targets;
-# the difference is where a mistake surfaces.
+# Chapter 3, "Macros vs Rules". The two GHDL macros stamp the same two
+# targets; the difference is where a mistake surfaces. The NVC macros
+# below them are the chapter's vhdl_testbench and the symbolic rewrite of
+# vhdl_test.
 load(":macros.bzl", "ghdl_verilog_from_sources", "ghdl_verilog_symbolic")
+load(":testbench.bzl", "vhdl_testbench")
+load(":vhdl_test_symbolic.bzl", "vhdl_test")
 
 # Legacy macro: a bare Starlark function.
 ghdl_verilog_from_sources(
@@ -14,4 +18,23 @@ ghdl_verilog_symbolic(
     name = "counter_symbolic",
     srcs = ["counter.vhd"],
     unit = "counter",
+)
+
+# vhdl_testbench stamps counter_lib, the elaborated counter_tb, and the
+# vhdl_run target `counter`, whose output is the waveform counter.vcd.
+# The simulation runs at build time, so a failed assertion fails the build.
+vhdl_testbench(
+    name = "counter",
+    srcs = ["counter.vhd", "counter_tb.vhd"],
+    deps = [],
+)
+
+# The symbolic vhdl_test takes the same call site as the legacy macro.
+# It stamps one library per entity: counter_sim_counter_tb_lib.
+# Misspell srcs as `sources` here and loading fails at this line.
+vhdl_test(
+    name = "counter_sim",
+    srcs = ["counter.vhd", "counter_tb.vhd"],
+    deps = [],
+    entities = ["counter_tb"],
 )
