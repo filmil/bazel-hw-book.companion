@@ -1,0 +1,8 @@
+# Chapter 10, "Depsets": a postorder depset lists dependencies before the
+# libraries that use them, which is the order GHDL analyzes them in.
+load(":depset_test.bzl", "postorder_test")
+
+postorder_test(
+    name = "postorder_test",
+    size = "small",
+)
