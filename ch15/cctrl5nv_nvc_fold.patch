@@ -1,0 +1,74 @@
+NVC 1.22 cannot fold niladic architecture-local wrapper functions used in
+globally-static constant array bounds (emits "missing body for CCTRL5NV.PA_MSB"
+at elaboration).  Convert the pa_msb/va_msb/ga_msb/gpa_msb/gva_msb wrappers to
+constants (their operands physbits/riscv_mmu/ext_h are all elaboration-static),
+which fold cleanly.  Behavior-preserving for other simulators and synthesis.
+--- a/lib/gaisler/noelv/core/cctrl5nv.vhd
++++ b/lib/gaisler/noelv/core/cctrl5nv.vhd
+@@ -205,20 +205,14 @@
+   end;
+ 
+   -- Actual physical address MSB.
+-  function pa_msb return integer is
+-  begin
+-    return minimum(physbits - 1, gaisler.mmucacheconfig.pa_msb(riscv_mmu));
+-  end;
++  constant pa_msb : integer := minimum(physbits - 1, gaisler.mmucacheconfig.pa_msb(riscv_mmu));
+ 
+   -- Guest physical address MSB.
+-  function ga_msb return integer is
++  function sel_int(c : boolean; a : integer; b : integer) return integer is
+   begin
+-    if ext_h = 1 then
+-      return gaisler.mmucacheconfig.ga_msb(riscv_mmu);
+-    else
+-      return pa_msb;
+-    end if;
++    if c then return a; else return b; end if;
+   end;
++  constant ga_msb : integer := sel_int(ext_h = 1, gaisler.mmucacheconfig.ga_msb(riscv_mmu), pa_msb);
+ 
+   function has_pt(atp : atp_type) return boolean is
+   begin
+@@ -249,10 +243,7 @@
+   end;
+ 
+   -- Virtual address MSB.
+-  function va_msb return integer is
+-  begin
+-    return gaisler.mmucacheconfig.va_msb(riscv_mmu);
+-  end;
++  constant va_msb : integer := gaisler.mmucacheconfig.va_msb(riscv_mmu);
+ 
+   function va_size(index : integer) return integer is
+   begin
+@@ -301,27 +292,13 @@
+   -- Guest (or actual when no hypervisor) physical address MSB.
+   -- For now this assumes that supervisor and hypervisor
+   -- page table types are always the "same" and fixed.
+-  function gpa_msb return integer is
+-  begin
+-    if ext_h = 1 then
+-      return maximum(pa_msb, ga_msb);
+-    else
+-      return pa_msb;
+-    end if;
+-  end;
++  constant gpa_msb : integer := sel_int(ext_h = 1, maximum(pa_msb, ga_msb), pa_msb);
+ 
+   -- MSB for TLB lookup address.
+   -- This can be a virtual address, or a guest physical address when hypervisor.
+   -- For now this assumes that supervisor and hypervisor
+   -- page table typers are always the "same" and fixed.
+-  function gva_msb return integer is
+-  begin
+-    if ext_h = 1 then
+-      return maximum(va_msb, ga_msb);
+-    else
+-      return va_msb;
+-    end if;
+-  end;
++  constant gva_msb : integer := sel_int(ext_h = 1, maximum(va_msb, ga_msb), va_msb);
+ 
+   -- Virtual address
+   constant va  : std_logic_vector(va_msb downto 0)  := (others => '0');

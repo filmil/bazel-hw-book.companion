@@ -91,3 +91,27 @@ kconfig.repo(
     interpreter = "@python_3_12_host//:python",
 )
 use_repo(kconfig, "grlib_config")
+
+# The http_archive listings of Chapter 15: use_repo_rule makes
+# http_archive callable in MODULE.bazel, and the call fetches, verifies
+# and patches the GRLIB release. The URL, prefix, integrity and patch
+# arguments are as printed. The listing's labels point into the grlib
+# module's //third_party/grlib; here the overlay BUILD file and the patch
+# are in ch15. The patch is copied from bazel_grlib 0.2.4.
+http_archive = use_repo_rule(
+    "@bazel_tools//tools/build_defs/repo:http.bzl",
+    "http_archive",
+)
+
+http_archive(
+    name = "grlib_srcs",
+    build_file = "//ch15:grlib.BUILD",
+    strip_prefix = "grlib-gpl-2025.2-b4298",
+    urls = ["https://download.gaisler.com/products/" +
+            "GRLIB/bin/grlib-gpl-2025.2-b4298.tar.gz"],
+    integrity =
+        "sha256-NCv//yj1TxVyXP77p+n6xc6/MNGJnlkPzVIWz6UiBkA=",
+    patches =
+        ["//ch15:cctrl5nv_nvc_fold.patch"],
+    patch_args = ["-p1"],
+)

@@ -1,0 +1,25 @@
+# Chapter 15, "Repository rules". MODULE.bazel declares @grlib_srcs with
+# the chapter's http_archive listing; see the comment there. The targets
+# below are not in the book. They check that the archive was fetched and
+# patched, and that NVC analyzes a GRLIB file from it.
+load("@rules_nvc//build/nvc:rules.bzl", "vhdl_library")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+exports_files([
+    "cctrl5nv_nvc_fold.patch",
+    "grlib.BUILD",
+])
+
+vhdl_library(
+    name = "grlib_version",
+    srcs = ["@grlib_srcs//:lib/grlib/stdlib/version.vhd"],
+    library_name = "grlib",
+)
+
+sh_test(
+    name = "patched_test",
+    size = "small",
+    srcs = ["patched_test.sh"],
+    args = ["$(rootpath @grlib_srcs//:lib/gaisler/noelv/core/cctrl5nv.vhd)"],
+    data = ["@grlib_srcs//:lib/gaisler/noelv/core/cctrl5nv.vhd"],
+)
