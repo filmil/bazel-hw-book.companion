@@ -1,26 +1,30 @@
 """The companion workspace for "Hardware Development with Bazel".
 
-Every target here is a listing from the book, buildable as printed. The
-chapter directories hold BUILD files and their sources and nothing else,
-so a listing on the page and a target in this repo can be compared line
-by line.
+Each target here is a listing from the book, buildable as printed. The
+chapter directories hold BUILD files and their sources, so a listing on
+the page and a file in this repository can be compared line by line.
 
-Versions are the ones the hdlfactory registry actually serves; check with
+Versions are the ones the hdlfactory registry actually serves. To check:
 
     curl -s https://raw.githubusercontent.com/filmil/bazel-registry/main/\
-      modules/bazel_rules_ghdl/metadata.json | jq -r .versions[-1]
+      modules/rules_ghdl/metadata.json | jq -r .versions[]
 """
 
 module(
     name = "hdl_bazel_book_examples",
     version = "0.1.0",
-    bazel_compatibility = [">=8.0.0"],
+    bazel_compatibility = [">=9.0.0"],
 )
 
-# The VHDL toolchain Chapter 1 tours. bazel_rules_ghdl builds GHDL itself
-# from Ada source through the @ghdl module, so nothing needs installing --
-# and the first build is correspondingly slow.
-bazel_dep(name = "bazel_rules_ghdl", version = "1.0.0")
+# The VHDL toolchain of the Chapter 1 tour. rules_ghdl 1.2.0 is the last
+# release with the ghdl_library and ghdl_verilog API the book prints;
+# 1.2.1 moved to ghdl_analyze and rules_vhdl. It builds GHDL from Ada
+# source through the BCR `ghdl` module, so nothing needs installing.
+#
+# The book loads it as @bazel_rules_ghdl, the ruleset's name before the
+# registry rename (Appendix E). repo_name keeps those load statements
+# working as printed.
+bazel_dep(name = "rules_ghdl", version = "1.2.0", repo_name = "bazel_rules_ghdl")
 
-# unittest.bzl, for the analysistest examples of Chapter 19.
+# unittest.bzl, for the analysis tests of Chapters 10 and 19.
 bazel_dep(name = "bazel_skylib", version = "1.9.0")

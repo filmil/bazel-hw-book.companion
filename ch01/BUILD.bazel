@@ -1,11 +1,11 @@
-# Chapter 1, "A tour of a real HDL ruleset". This BUILD file is the
-# listing on that page, unabridged -- two rules, and Bazel knows the
-# dependency between them.
-load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library", "ghdl_verilog")
-
-# ch19 analyzes this same source, so the tests assert against the
-# design the tour builds rather than a copy that could drift.
-exports_files(["counter.vhd"])
+# Chapter 1, "A tour of a real HDL ruleset". Everything down to the
+# exports_files line is the listing from that page, unabridged: two rules,
+# and Bazel knows the dependency between them.
+#
+# The book builds this as //core:counter_v in one place and //:counter_v
+# in another. Here it is //ch01:counter_v.
+load("@bazel_rules_ghdl//:rules.bzl",
+     "ghdl_library", "ghdl_verilog")
 
 ghdl_library(
     name = "counter_lib",
@@ -17,3 +17,7 @@ ghdl_verilog(
     lib = ":counter_lib",
     unit = "counter",
 )
+
+# Not part of the listing. Chapter 19 analyzes this same source, so its
+# tests check the design the tour builds, and there is no copy to drift.
+exports_files(["counter.vhd"])

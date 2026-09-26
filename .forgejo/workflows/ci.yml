@@ -13,15 +13,14 @@ jobs:
     runs-on: docker
     steps:
       - uses: actions/checkout@v4
-      # Everything here comes from Bazel modules -- GHDL is built from
-      # source through @ghdl -- so unlike the manuscript repository this
-      # one needs nothing from the image but bazel itself.
+      # Everything here comes from Bazel modules. GHDL is built from Ada
+      # source through @ghdl. Unlike the manuscript repository, this one
+      # needs only bazel from the image.
       - name: Build and test every listing
         run: bazel test //... --test_output=errors
-      # Chapter 1 claims compile order is derived, not maintained. The
-      # claim is only worth printing if it is true, so assert the
-      # failure rather than trusting the prose: with the deps edge gone,
-      # the build must fail and say why.
+      # Chapter 1 claims that Bazel derives the compile order from the
+      # graph. This step checks the claim: with the deps edge gone, the
+      # build must fail and name the missing library.
       - name: The derived-order claim must actually hold
         run: |
           cp design/counter/BUILD.bazel /tmp/keep
@@ -36,5 +35,5 @@ jobs:
           grep -q 'cannot find resource library "util"' /tmp/err || {
             echo "FAIL: it failed, but not with the located error the"
             echo "book promises. Actual:"; cat /tmp/err; exit 1; }
-          echo "confirmed: GHDL cannot find the package, in a sandbox"
-          echo "that honestly does not contain it"
+          echo "confirmed: without the deps edge, GHDL cannot find the"
+          echo "util package"
