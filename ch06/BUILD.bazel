@@ -1,0 +1,24 @@
+# Chapter 6, "Attributes and the rule's interface". The listing shows a
+# library with a deps edge and a netlist with a generic set at synthesis.
+# It is a fragment: the load statement and the util_lib target are added
+# here so that it builds. Everything from the counter_lib target down is
+# the listing as printed.
+load("@bazel_rules_ghdl//:rules.bzl", "ghdl_library", "ghdl_verilog")
+
+ghdl_library(
+    name = "util_lib",
+    srcs = ["util.vhd"],
+)
+
+ghdl_library(
+    name = "counter_lib",
+    srcs = ["counter.vhd"],
+    deps = [":util_lib"],
+)
+
+ghdl_verilog(
+    name = "counter_v",
+    lib = ":counter_lib",
+    unit = "counter",
+    generics = {"WIDTH": "8"},
+)
