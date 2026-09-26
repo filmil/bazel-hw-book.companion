@@ -1,0 +1,28 @@
+# Chapter 16, "Module extensions". extensions.bzl is the chapter's
+# riscv_toolchain extension, as printed. MODULE.bazel activates it with the
+# chapter's use_extension and use_repo lines; see the comment there.
+#
+# The targets below are not in the book. They use the fetched GCC to
+# compile a freestanding C function, and check that the result is a
+# RISC-V object file.
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+genrule(
+    name = "hello_o",
+    srcs = ["hello.c"],
+    outs = ["hello.o"],
+    cmd = "$(execpath @opensbi_riscv_toolchain//:gcc) " +
+          "-ffreestanding -nostdlib -O2 -c $< -o $@",
+    tools = [
+        "@opensbi_riscv_toolchain//:all",
+        "@opensbi_riscv_toolchain//:gcc",
+    ],
+)
+
+sh_test(
+    name = "riscv_elf_test",
+    size = "small",
+    srcs = ["riscv_elf_test.sh"],
+    args = ["$(rootpath :hello_o)"],
+    data = [":hello_o"],
+)

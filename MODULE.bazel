@@ -50,3 +50,13 @@ bazel_dep(name = "stardoc", version = "0.8.1",
           dev_dependency = True)
 bazel_dep(name = "bazel_lib", version = "3.3.1",
           dev_dependency = True)
+
+# The use_extension and use_repo lines of Chapter 16 for a module that
+# declares its own extension. The book's module keeps the file at
+# //internal/toolchain:extensions.bzl; here it is in ch16. The listing
+# also activates a qemu extension, which the chapter does not print, so
+# those lines are left out.
+riscv_toolchain = use_extension(
+    "//ch16:extensions.bzl",
+    "riscv_toolchain")
+use_repo(riscv_toolchain, "opensbi_riscv_toolchain")
