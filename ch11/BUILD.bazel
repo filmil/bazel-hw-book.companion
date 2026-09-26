@@ -1,0 +1,21 @@
+# Chapter 11, "Simulation and test rules", and Chapter 19, "Testing
+# rules", print this listing. Chapter 19 shows it with the load
+# statement and Chapter 11 without; the file is the Chapter 19 form.
+#
+# vhdl_test stamps one test per entity: sim_test_tb_test and
+# sim_test_config_tb2_test. The VHDL sources are copied from the rules_nvc
+# integration tests.
+load("@rules_nvc//build/nvc:rules.bzl",
+     "vhdl_library", "vhdl_test")
+
+vhdl_library(
+    name = "sim",
+    srcs = ["clkgen.vhdl", "resetgen.vhdl"],
+)
+
+vhdl_test(
+    name = "sim_test",
+    srcs = ["clkgen_test.vhdl"],
+    deps = [":sim"],
+    entities = ["tb", "config_tb2"],
+)

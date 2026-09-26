@@ -26,5 +26,17 @@ module(
 # working as printed.
 bazel_dep(name = "rules_ghdl", version = "1.2.0", repo_name = "bazel_rules_ghdl")
 
+# Simulation and tests with NVC, for Chapters 3, 8, 11 and 19. rules_nvc
+# builds NVC from C source through the `nvc` module of the hdlfactory
+# registry. That build needs a C compiler on the host.
+bazel_dep(name = "rules_nvc", version = "4.5.2")
+
+# Self-extracting archives, for the Chapter 11 demo. 1.0.7 is the version
+# Appendix E names.
+bazel_dep(name = "rules_shar", version = "1.0.7")
+
+# sh_test, for the Chapter 11 demo test.
+bazel_dep(name = "rules_shell", version = "0.8.0")
+
 # unittest.bzl, for the analysis tests of Chapters 10 and 19.
 bazel_dep(name = "bazel_skylib", version = "1.9.0")

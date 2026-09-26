@@ -1,0 +1,40 @@
+# Chapter 11's shar_binary listing: a demo script that ships with a
+# waveform in one self-extracting file. The shar_binary target is the
+# listing as printed. The rest is added so that ":counter_wave" exists
+# and so that a test runs the archive.
+load("@rules_shar//:macros.bzl", "shar_binary")
+load("@rules_nvc//build/nvc:rules.bzl", "vhdl_elaborate", "vhdl_library", "vhdl_run")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+shar_binary(
+    name = "demo",
+    srcs = ["demo.sh"],
+    data = [":counter_wave"],  # a vhdl_run wave
+)
+
+# The wave: the Chapter 1 counter under its testbench, simulated at build
+# time. The output is counter_wave.vcd.
+vhdl_library(
+    name = "counter_lib",
+    srcs = ["counter.vhd", "counter_tb.vhd"],
+)
+
+vhdl_elaborate(
+    name = "counter_tb",
+    library = ":counter_lib",
+)
+
+vhdl_run(
+    name = "counter_wave",
+    entity = ":counter_tb",
+)
+
+# shar_binary also stamps demo_shar, whose output is demo.shar. The test
+# runs that file directly.
+sh_test(
+    name = "demo_test",
+    size = "small",
+    srcs = ["demo_test.sh"],
+    args = ["$(rootpath :demo_shar)"],
+    data = [":demo_shar"],
+)
