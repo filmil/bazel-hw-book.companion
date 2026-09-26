@@ -1,0 +1,94 @@
+# Chapter 13, "Platforms and configuration".
+load("@bazel_skylib//rules:common_settings.bzl",
+     "string_flag")
+load("@rules_nvc//build/nvc:rules.bzl", "vhdl_library")
+
+# The platform listing, as printed. Building it only checks that the
+# constraint values resolve. The chapter's command that builds //sw:boot_rom
+# for this platform needs a riscv64 bare-metal C++ toolchain, and none of
+# the registries serves one; see the README.
+platform(
+    name = "muntjac_baremetal",
+    constraint_values = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv64",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# The string_flag listing, as printed. The listing ends with
+# "one config_setting per standard"; the other four follow it.
+string_flag(
+    name = "vhdl_standard",
+    build_setting_default = "1993",
+    values = ["1987", "1993", "2002", "2008", "2019"],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "std_2008",
+    flag_values = {":vhdl_standard": "2008"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "std_1987",
+    flag_values = {":vhdl_standard": "1987"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "std_1993",
+    flag_values = {":vhdl_standard": "1993"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "std_2002",
+    flag_values = {":vhdl_standard": "2002"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "std_2019",
+    flag_values = {":vhdl_standard": "2019"},
+    visibility = ["//visibility:public"],
+)
+
+# The vhdl_library and filegroup listings, adapted. In the book they live
+# in the grlib module and name @grlib//:std_* and @grlib_srcs//. Here the
+# config settings are the ones above, and five small stand-in files take
+# the place of the GRLIB sources. The shape is as printed: the same
+# config settings choose both the standard and the file at a fixed
+# position in the ordered list. Build it with, for example:
+#
+#   bazel build --//ch13:vhdl_standard=2019 //ch13:grlib
+#
+# 1993, 2002, 2008 and 2019 build. The flag also offers 1987, which
+# NVC 1.22 rejects with "VHDL standard 1076-1987 is not supported".
+vhdl_library(
+    name = "grlib",
+    srcs = [":grlib_files"],
+    standard = select({
+        ":std_1987": "1987",
+        ":std_1993": "1993",
+        ":std_2002": "2002",
+        ":std_2008": "2008",
+        ":std_2019": "2019",
+        "//conditions:default": "1993",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+# do not sort
+filegroup(
+    name = "grlib_files",
+    srcs = ["version.vhd"] +
+        ["config.vhd"] +
+        ["stdlib.vhd"] + select({
+            ":std_2008": ["stdio_2008.vhd"],
+            "//conditions:default":
+                ["stdio.vhd"],
+        }),
+    visibility = ["//visibility:public"],
+)
