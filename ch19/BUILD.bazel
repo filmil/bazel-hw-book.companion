@@ -26,9 +26,9 @@ action_contract_test(
     target_under_test = ":counter_lib",
 )
 
-# The stardoc listing. rules_bzl is not in the listing. It is the
-# bzl_library that `deps` names, added so that stardoc can read the files
-# rules.bzl loads.
+# The stardoc listing. rules_bzl is the bzl_library that `deps` names,
+# so that stardoc can read the files rules.bzl loads. The book prints it
+# since the review pass of 2026-10.
 bzl_library(
     name = "rules_bzl",
     srcs = ["rules.bzl"],
