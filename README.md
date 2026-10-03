@@ -4,6 +4,10 @@ This is the example workspace for *Hardware Development with Bazel: Authoring HD
 Each target here builds a listing from the book, so you can compare a page and a file line by line.
 Where a listing is a fragment, the file adds the least it needs to build, and a comment says what was added.
 
+This repository is published at https://github.com/filmil/bazel-hw-book.companion.
+That copy is a read-only mirror: every change arrives there from the private repository where the book is written, so pull requests opened on GitHub cannot be merged.
+Report problems as GitHub issues instead.
+
 ```sh
 bazel test //...                    # every listing that builds, and every test
 bazel build //ch01:counter_v        # the Chapter 1 tour
@@ -241,9 +245,8 @@ Chapter 1's targets live in the `ch01` package here.
 So `//:counter_v` in the book is `//ch01:counter_v` in this repository.
 
 The rows above marked "with a fix" record listings that did not build as printed.
-Book pull request #62 (https://git.hdlfactory.com/filmil/bazel-hw-book/pulls/62) fixes them in the book.
-Once it is merged, those files match the printed listings.
-The errors it fixes were these:
+The book fixed them in its review pass of 2026-09, so those files now match the printed listings.
+The errors were these:
 
 - Chapter 1 builds `//core:counter_v` in #2 and `//:counter_v` in #3 and #5.
   Here the target is `//ch01:counter_v`.
